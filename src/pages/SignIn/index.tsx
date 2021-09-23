@@ -12,13 +12,14 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useSignIn } from './vm';
+import { useSignIn } from './view-model';
+import { Controller } from 'react-hook-form';
 
 const theme = createTheme();
 
 export default function SignIn() {
   const vm = useSignIn()
-  const { methods } = vm
+  const { methods, data: { control } } = vm
 
   return (
     <ThemeProvider theme={theme}>
@@ -32,36 +33,57 @@ export default function SignIn() {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Войти
           </Typography>
           <Box component="form" onSubmit={methods.submit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
+
+            <Controller
               name="email"
-              autoComplete="email"
-              autoFocus
+              control={control}
+              defaultValue=""
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  label="Email"
+                  variant="filled"
+                  value={value}
+                  onChange={onChange}
+                  error={!!error}
+                  autoFocus
+                  helperText={error ? error.message : null}
+                  type="email"
+                />
+              )}
+              rules={{ required: 'Email required' }}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
+
+            <Controller
               name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
+              control={control}
+              defaultValue=""
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  label="Password"
+                  variant="filled"
+                  value={value}
+                  onChange={onChange}
+                  error={!!error}
+                  helperText={error ? error.message : null}
+                  type="password"
+                />
+              )}
+              rules={{ required: 'Password required' }}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+              label="Запомнить"
             />
             <Button
               type="submit"
@@ -74,12 +96,12 @@ export default function SignIn() {
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
-                  Forgot password?
+                  Забыли пароль?
                 </Link>
               </Grid>
               <Grid item>
                 <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                  {"Зарегистрироваться"}
                 </Link>
               </Grid>
             </Grid>
